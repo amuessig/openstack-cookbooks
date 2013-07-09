@@ -13,8 +13,9 @@ run_list(
   "role[nova-scheduler]",
   "role[nova-api-ec2]",
   "role[nova-api-os-compute]",
-  "role[nova-volume]",
   "role[nova-cert]",
   "role[nova-vncproxy]",
-  "role[horizon-server]"
+  "role[cinder-all]",
+  "role[horizon-server]",
+  "role[quantum-network-manager]"
 )
