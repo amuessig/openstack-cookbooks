@@ -33,7 +33,7 @@
 	url = https://github.com/rcbops-cookbooks/glance.git
 [submodule "cookbooks/horizon"]
 	path = cookbooks/horizon
-	url = https://github.com/rcbops-cookbooks/horizon.git
+	url = https://github.com/lsinfo3/openstack-cookbook-horizon.git
 [submodule "cookbooks/database"]
 	path = cookbooks/database
 	url = https://github.com/opscode-cookbooks/database.git
