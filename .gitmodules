@@ -53,8 +53,9 @@
 	path = cookbooks/swift
 	url = https://github.com/rcbops-cookbooks/swift.git
 [submodule "cookbooks/osops-utils"]
+; rscops cookbook not compatible with Ubuntu Raring
 	path = cookbooks/osops-utils
-	url = https://github.com/rcbops-cookbooks/osops-utils.git
+	url = https://github.com/DFAU/osops-utils.git
 [submodule "cookbooks/dsh"]
 	path = cookbooks/dsh
 	url = https://github.com/rcbops-cookbooks/dsh.git
@@ -80,6 +81,7 @@
 	path = cookbooks/collectd-graphite
 	url = https://github.com/rcbops-cookbooks/collectd-graphite.git
 [submodule "cookbooks/rsyslog"]
+; we need rsyslog >= 1.6.1
 	path = cookbooks/rsyslog
 	url = https://github.com/opscode-cookbooks/rsyslog.git
 [submodule "cookbooks/modules"]
