@@ -22,10 +22,14 @@ override_attributes(
     "nova" => "192.168.100.0/24"
   },
   "nova" => {
-    #"network" => {
+    "debug" => true,
+    "network" => {
     #  "fixed_range" => "192.168.100.0/24",
-    #  "public_interface" => "eth1"
-    #},
+      "public_interface" => "eth1"
+    },
+    "libvirt" => {
+      "virt_type" => "lxc"
+    },
     "networks" => [
       {
         "label" => "public",
@@ -33,7 +37,7 @@ override_attributes(
         "num_networks" => "1",
         "network_size" => "255",
         "bridge" => "br100",
-        "bridge_dev" => "eth0",
+        "bridge_dev" => "eth1",
         "dns1" => "8.8.8.8",
         "dns2" => "8.8.4.4"
       }
