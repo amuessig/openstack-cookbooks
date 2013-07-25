@@ -150,3 +150,6 @@
 [submodule "cookbooks/iptables"]
 	path = cookbooks/iptables
 	url = https://github.com/opscode-cookbooks/iptables.git
+[submodule "cookbooks/ls3-openstack"]
+	path = cookbooks/ls3-openstack
+	url = https://github.com/lsinfo3/openstack-cookbook-ls3-openstack.git
