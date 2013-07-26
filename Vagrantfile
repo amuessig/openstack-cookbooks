@@ -70,18 +70,33 @@ Vagrant.configure("2") do |config|
     # Provisioner
     chef_server.vm.provision :shell do |shell|
       shell.args = "chef-server_11.0.8-1.ubuntu.12.04_amd64.deb"
-      shell.inline = "
-        if test ! -f /home/vagrant/$1; then
-          wget https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/12.04/x86_64/$1;
-          dpkg -i $1;
-          sudo chef-server-ctl reconfigure;
+      shell.inline = '
+        echo Checking, if chef-server is installed
+        dpkg -l | grep chef-server > /dev/null
+        if [[ $? -eq 0 ]]; then
+          echo Chef-Server already installed
+        else
+          if [[ ! -f /vagrant/tmp/$1 ]]; then
+            echo Downloading chef-server
+            wget https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/12.04/x86_64/$1 -O /vagrant/tmp/$1;
+          fi
+          echo Installing chef-server from /vagrant/tmp/$1
+          dpkg -i /vagrant/tmp/$1;
+          chef-server-ctl reconfigure;
           echo;
           echo Your admin.pem:;
           cat /etc/chef-server/admin.pem;
           echo;
           echo Your validator.pem:;
           cat /etc/chef-server/chef-validator.pem;
-        fi"
+        fi'
+    end
+
+    chef_server.vm.provision :shell do |shell|
+      shell.inline = "
+        echo Copying your admin.pem and chef-validator into your .chef/ directory
+        cp /etc/chef-server/admin.pem /vagrant/.chef/
+        cp /etc/chef-server/chef-validator.pem /vagrant/.chef/"
     end
   end
 
@@ -120,7 +135,7 @@ Vagrant.configure("2") do |config|
       config.vm.provision :hostmanager
       config.vm.provision :chef_client do |chef|
         chef.chef_server_url     = "https://chef-server.#{domain}"
-        chef.validation_key_path = ".chef/openstack-validator-vagrant.pem"
+        chef.validation_key_path = ".chef/chef-validator.pem"
         chef.environment         = "vagrant"
         chef.run_list            = opts[:run_list]
         chef.log_level           = ENV['CHEF_LOG_LEVEL'] || :info

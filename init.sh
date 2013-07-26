@@ -1,16 +1,49 @@
 #!/bin/bash
 
+MY_NAME=${0##./}
 
+####################
+# helper functions
+####################
 function good() {
   TEXT=$@
-  echo -e $'\e[32m'$TEXT$'\e[00m'
+  echo -e [$MY_NAME] $'\e[32m'$TEXT$'\e[00m'
+}
+function warn() {
+  TEXT=$@
+  echo -e $'\e[41m'[$MY_NAME] $TEXT$'\e[00m'
 }
 function die() {
-  TEXT=$@
-  echo -e $'\e[41m'$TEXT$'\e[00m'
+  warn $@
   exit 1
 }
+function success(){
+  echo -e $'\e[42m'[$MY_NAME] $TEXT$'\e[00m'
+}
+function run() {
+  CMD=$@
+  $CMD
+  RET_VAL=$?
+  if [[ $RET_VAL -gt 0 ]]; then
+    warn ">$CMD< exited unclean"
+    exit $RET_VAL
+  fi
+}
+function vagrant_up_provision() {
+  VM=$1
+  vagrant status | grep $1 | grep running > /dev/null
+  if [[ $? -eq 0 ]]; then
+    good VM $VM already running. Doing a provisioning.
+    run vagrant provision $VM
+  else
+    good Spinning new VM $VM up
+    run vagrant up $VM
+  fi
+}
 
+####################
+# ENV check: vagrant
+####################
 VAGRANT_PATH=$(which vagrant)
 if [[ -x "$VAGRANT_PATH" ]]; then
   good Vagrant found at $VAGRANT_PATH
@@ -18,22 +51,72 @@ else
   die Vagrant executable not found. Install it from http://www.vagrantup.com
 fi
 
+####################
+# Vagrant plugins
+####################
 for plugin in hostmanager omnibus; do
-  vagrant plugin install vagrant-$plugin
+  vagrant plugin list | grep vagrant-$plugin > /dev/null
+  if [[ $? -eq 0 ]]; then
+    good Vagrant plugin $plugin already installed
+  else
+    vagrant plugin install vagrant-$plugin
+  fi
 done
 
+####################
+# Chef Server
+####################
 good Setting up the Chef-Server
+vagrant_up_provision chef-server
 
-vagrant up chef-server
+if [[ ! -f .chef/admin.pem ]]; then
+  die .chef/admin.pem does not exist, feels like the provisioning failed
+fi
 
 good Chef server is up and running
-good Take the files admin.pem and validation.pem and copy them to .chef/
+good admin.pem and chef-validator.pem have been copied to .chef/
 
-die Sorry, the rest is not implemented! Upload roles, cookbooks and environments to https://chef-server.openstack.vagrant and then run `vagrant up allinone`.
+####################
+# Knife setup
+####################
+good Copying knife.rb.example to .chef/knife.rb
+cp knife.rb.example .chef/
 
-# prompt Did you copy them?
+####################
+# Chef upload
+####################
+good Uploading cookbooks
+run find cookbooks -type d -depth 1  | sed -e "s/cookbooks\///g" | xargs knife cookbook upload
+good Uploading roles
+run knife role from file roles/*.rb
+good Uploading environments
+run knife environment from file environments/*.rb
 
-# knife upload . -c .chef/knife-vagrant.rb
-# knife role from file environments/*.rb -c .chef/knife-vagrant.rb
-# knife environment from file environments/*.rb -c .chef/knife-vagrant.rb
+####################
+# Node allinone
+####################
+good Spinning up the allinone none
+vagrant up allinone
 
+good Reloading the allinone node, as we need one restart to make things work
+vagrant reload allinone
+
+####################
+# Other nodes
+####################
+good "Spinning up the remaining nodes (if any)"
+run vagrant up
+
+####################
+# Success
+####################
+success We\'re done!
+success You can now log into OpenStack Horizon at https://allinone.openstack.vagrant with admin / secrete.
+
+####################
+# Open Horizon
+####################
+OPEN_PATH=$(which open)
+if [[ -x "$OPEN_PATH" ]]; then
+  $OPEN_PATH https://allinone.openstack.vagrant/
+fi
