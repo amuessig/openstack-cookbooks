@@ -64,6 +64,20 @@ for plugin in hostmanager omnibus; do
 done
 
 ####################
+# Knife setup
+####################
+if [[ ! -d .chef/ ]]; then
+  good Creating .chef/
+  mkdir .chef
+fi
+
+if [[ ! -f .chef/knife.rb ]]; then
+  good Copying knife.rb.example to .chef/knife.rb
+  cp knife.rb.example .chef/knife.rb
+fi
+
+
+####################
 # Chef Server
 ####################
 good Setting up the Chef-Server
@@ -75,12 +89,6 @@ fi
 
 good Chef server is up and running
 good admin.pem and chef-validator.pem have been copied to .chef/
-
-####################
-# Knife setup
-####################
-good Copying knife.rb.example to .chef/knife.rb
-cp knife.rb.example .chef/
 
 ####################
 # Chef upload
