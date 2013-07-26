@@ -76,6 +76,9 @@ Vagrant.configure("2") do |config|
         if [[ $? -eq 0 ]]; then
           echo Chef-Server already installed
         else
+          if [[ ! -d /vagrant/tmp ]]; then
+            mkdir /vagrant/tmp
+          fi
           if [[ ! -f /vagrant/tmp/$1 ]]; then
             echo Downloading chef-server
             wget https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/12.04/x86_64/$1 -O /vagrant/tmp/$1;
