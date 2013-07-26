@@ -18,7 +18,7 @@ function die() {
   exit 1
 }
 function success(){
-  echo -e $'\e[1;30;42m'[$MY_NAME] $TEXT$'\e[00m'
+  echo -e $'\e[30;42m'[$MY_NAME] $TEXT$'\e[00m'
 }
 function run() {
   CMD=$@
