@@ -67,6 +67,9 @@ done
 ####################
 # Knife setup
 ####################
+
+gem install chef
+
 if [[ ! -d .chef/ ]]; then
   good Creating .chef/
   mkdir .chef
