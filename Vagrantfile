@@ -27,6 +27,7 @@ Vagrant.configure("2") do |config|
   base_box = ENV['VAGRANT_BOX'] || "ubuntu-13.04"
 
   config.vm.box = base_box
+  config.vm.box_url = "http://st-g.de/fileadmin/downloads/2013-07/ubuntu-13.04.box"
   # config.vm.synced_folder "./tmp/apt-cache/#{base_box}", "/var/cache/apt", :create => true
 
   # this requires vagrant-omnibus plugin (`vagrant plugin install vagrant-omnibus`)
