@@ -48,10 +48,7 @@ function cmd_exists(){
 ####################
 # ENV check: vagrant
 ####################
-VAGRANT_PATH=$(which vagrant)
-if [[ -x "$VAGRANT_PATH" ]]; then
-  good Vagrant found at $VAGRANT_PATH
-else
+if ! cmd_exists "vagrant"; then
   die Vagrant executable not found. Install it from http://www.vagrantup.com
 fi
 
@@ -66,6 +63,19 @@ for plugin in hostmanager omnibus; do
     vagrant plugin install vagrant-$plugin
   fi
 done
+
+###################
+# Ruby
+###################
+
+if ! cmd_exists ruby; then
+ die Ruby is not installed
+fi
+
+if ! cmd_exists gem; then
+ die "Ruby Gems is not installed. Install it! (maybe: apt-get install rubygems)"
+fi
+
 
 ####################
 # Knife setup
