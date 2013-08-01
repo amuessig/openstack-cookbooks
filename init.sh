@@ -81,7 +81,10 @@ fi
 # Knife setup
 ####################
 
-gem install chef --no-rdoc --no-ri
+if ! cmd_exists knife; then
+  good Installing the chef gem
+  gem install chef --no-rdoc --no-ri
+fi
 
 if [[ ! -d .chef/ ]]; then
   good Creating .chef/
