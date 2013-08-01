@@ -41,6 +41,9 @@ function vagrant_up_provision() {
     run vagrant up $VM
   fi
 }
+function cmd_exists(){
+  type "$1" &> /dev/null ;
+}
 
 ####################
 # ENV check: vagrant
