@@ -81,7 +81,7 @@ fi
 # Knife setup
 ####################
 
-gem install chef
+gem install chef --no-rdoc --no-ri
 
 if [[ ! -d .chef/ ]]; then
   good Creating .chef/
