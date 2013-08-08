@@ -114,7 +114,7 @@ good admin.pem and chef-validator.pem have been copied to .chef/
 # Chef upload
 ####################
 good Uploading cookbooks
-run find cookbooks/ -type d -maxdepth 1  | sed -e "s/cookbooks\///g" | xargs knife cookbook upload
+run find cookbooks/ -maxdepth 1 -type d  | sed -e "s/cookbooks\///g" | xargs knife cookbook upload
 good Uploading roles
 run knife role from file roles/*.rb
 good Uploading environments
